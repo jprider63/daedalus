@@ -50,6 +50,8 @@ data XRefType = XRefTable   -- traditional xref table
               | XRefStream  -- newer alternative to XRef table
               deriving (Eq,Ord)
 
+
+ppXRefType :: XRefType -> Doc
 ppXRefType XRefTable  = "traditional cross reference table"
 ppXRefType XRefStream = "cross reference stream"
   
@@ -247,7 +249,7 @@ printIncUpdateReport updates =
     \(nm,iu)->
       do
       mapM_ putStrLn [ nm ++ ":"
-                     , "  " ++ ppXRefType (iu_type iu)
+                     , "  " ++ render(ppXRefType (iu_type iu))
                      , "  starts at byte offset "
                           ++ show (sizeToInt $ getXRefStart $ iu_startxref iu)
                      , "  xref entries:"
@@ -286,7 +288,7 @@ printCavityReport inp updates =
       do
       let xrefStart = sizeToInt $ getXRefStart $ iu_startxref iu
       mapM_ putStrLn [ nm ++ ":"
-                     , "  " ++ ppXRefType (iu_type iu)
+                     , "  " ++ render (ppXRefType (iu_type iu))
                      , "  body starts at byte offset " ++ show bodyStart
                      , "  xref starts at byte offset " ++ show xrefStart
                      , "  cavities:"
@@ -507,7 +509,6 @@ xrefEntriesToMap = foldM entry Map.empty
                   pError FromUser "xrefEntriesToMap.entry"
                                   ("Multiple entries for " ++ show ref)
 
-
 integerToInt :: Integer -> Parser Int
 integerToInt i =
   case toInt i of
@@ -547,7 +548,7 @@ locationOf_startxref bs =
   startxref       = "startxref"
   magicNumber     = 500 -- stop searching after 500 bytes from EOF
 
-
+  -- this does NOT parse or validate the EOF
   
 -- Pretty gross
 findStartXRef :: BS.ByteString -> Either String FileOffset
