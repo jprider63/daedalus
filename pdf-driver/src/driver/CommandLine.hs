@@ -8,7 +8,7 @@ module CommandLine ( Options(..)
 import Options.Applicative
 
 
-data RunMode = FAW | Demo 
+data RunMode = FAW | Demo
 
 data RunOps = Validate | ExtractText
 
@@ -17,7 +17,8 @@ data Options =
           , optOutput   :: FilePath
           , optMode     :: RunMode
           , optOps      :: RunOps
-          , optPassword :: String 
+          , optTextOutput :: FilePath
+          , optPassword :: String
           }
 
 outputOpt = strOption
@@ -37,10 +38,18 @@ opsOpt = flag Validate ExtractText
  <> short 't'
  <> help "Extract text from PDF" )
 
-passwordOpt = strOption 
-   ( long "pwd" 
-  <> short 'p' 
-  <> value "" 
+textOutputOpt = strOption
+   ( long "text-output"
+  <> short 'x'
+  <> value ""
+  <> metavar "FILE"
+  <> value "-"
+  <> help "Write extracted text to FILE (- for stdout)" )
+
+passwordOpt = strOption
+   ( long "pwd"
+  <> short 'p'
+  <> value ""
   <> metavar "PASSWORD")
 
 options :: Parser Options
@@ -48,8 +57,9 @@ options = Options <$> argument str (metavar "FILE")
                   <*> outputOpt
                   <*> modeOpt
                   <*> opsOpt
-                  <*> passwordOpt 
-          
+                  <*> textOutputOpt
+                  <*> passwordOpt
+
 opts :: ParserInfo Options
 opts = info (options <**> helper)
   ( fullDesc
