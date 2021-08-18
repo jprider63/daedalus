@@ -1,5 +1,5 @@
 cabal-version:       >=1.10
-name:                script
+name:                pdf-dom
 version:             0.1.0.0
 license-file:        LICENSE
 author:              Iavor Diatchki
